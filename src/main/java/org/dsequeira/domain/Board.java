@@ -10,7 +10,7 @@ public class Board {
     private int trailingSquare;
 
     public Board() {
-        this.tiles = new ArrayList<>();
+        this.tiles = new ArrayList<>(19);
         this.leadingSquare = -1;
         this.trailingSquare = -1;
     }
@@ -64,6 +64,12 @@ public class Board {
             }
         }
         return connectingTile;
+    }
+
+    public void reset() {
+        this.tiles.clear();
+        this.leadingSquare = -1;
+        this.trailingSquare = -1;
     }
 
     @Override

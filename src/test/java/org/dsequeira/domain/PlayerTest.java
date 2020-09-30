@@ -13,7 +13,6 @@ public class PlayerTest {
 
     @Mock
     private Board boardMock;
-
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
