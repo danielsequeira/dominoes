@@ -4,6 +4,8 @@ import org.dsequeira.domain.Board;
 import org.dsequeira.domain.Player;
 import org.dsequeira.domain.Stock;
 import org.dsequeira.domain.Tile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -16,10 +18,13 @@ public class GameService {
     private Stock stock;
     private Player activePlayer;
 
+    private static final Logger LOG = LoggerFactory.getLogger(GameService.class);
+
     public GameService(Player player1, Player player2) {
         this.player1 = player1;
         this.player2 = player2;
         this.board = new Board();
+        this.stock = new Stock();
     }
 
     public Player getPlayer1() {
@@ -55,8 +60,12 @@ public class GameService {
     }
 
     protected void initGame() {
+        player1.reset();
+        player2.reset();
+        board.reset();
+
         // initialize stock with 28 tiles
-        stock = new Stock();
+        stock.init();
 
         // each player draws seven tiles from the stock
         for (int i = 0; i<7; i++) {
@@ -67,7 +76,7 @@ public class GameService {
         // pull a random tile from the stock to start the line of play
         Tile firstTile = stock.pullTile();
         board.placeTile(firstTile);
-        System.out.println("Game starting with first tile: " + firstTile.toString());
+        LOG.info("Game starting with first tile: {}", firstTile.toString());
 
         // randomly select Player to start the game
         activePlayer = Arrays.asList(player1, player2).get(new Random().nextInt(2));
@@ -75,16 +84,18 @@ public class GameService {
 
     public void runGame() {
         initGame();
+
         while (!player1.getTiles().isEmpty() && !player2.getTiles().isEmpty()) {
             Tile tile = activePlayer.getValidTile(board);
 
             if (tile != null) {
                 Tile boardTile = board.placeTile(tile);
-                System.out.println(activePlayer.getName() + " plays " + tile.toString() + " to connect to tile " + boardTile.toString() + " on the board");
-                System.out.println("Board is now: " + board.toString());
+                LOG.info("{} plays {} to connect to tile {} on the board", activePlayer.getName(), tile.toString(), boardTile.toString());
+                LOG.info("Board is now: {}", board.toString());
 
                 if (activePlayer.getTiles().isEmpty()) {
-                    System.out.println("Player " + activePlayer.getName() + " has won!");
+                    LOG.info("Player {} has won!", activePlayer.getName());
+                    break;
                 }
 
                 switchActivePlayer();
@@ -92,12 +103,12 @@ public class GameService {
                 Tile stockTile = stock.pullTile();
 
                 if (stockTile == null) {
-                    System.out.println(activePlayer.getName() + " can't play, no more tiles to draw");
-                    System.out.println("Player " + getWinner().getName() + " has won!");
+                    LOG.info("{} can't play, no more tiles to draw", activePlayer.getName());
+                    LOG.info("Player {} has won!", getWinner().getName());
                     break;
                 }
                 activePlayer.addTile(stockTile);
-                System.out.println(activePlayer.getName() + " can't play, drawing tile " + stockTile.toString());
+                LOG.info("{} can't play, drawing tile {}", activePlayer.getName(), stockTile.toString());
             }
         }
     }

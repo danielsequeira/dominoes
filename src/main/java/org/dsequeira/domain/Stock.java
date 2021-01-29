@@ -9,7 +9,17 @@ public class Stock {
     private List<Tile> tiles;
 
     public Stock() {
-        this.tiles = new ArrayList<>();
+        this.tiles = new ArrayList<>(28);
+    }
+
+    public List<Tile> getTiles() {
+        return tiles;
+    }
+
+    public void init() {
+        // reset stock
+        this.tiles.clear();
+
         // initialize stock with 28 domino tiles
         for (int i = 0; i < 7; i++) {
             for (int j = i; j < 7; j++) {
@@ -17,10 +27,6 @@ public class Stock {
                 this.tiles.add(tile);
             }
         }
-    }
-
-    public List<Tile> getTiles() {
-        return tiles;
     }
 
     public Tile pullTile() {

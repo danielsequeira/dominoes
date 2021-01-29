@@ -8,9 +8,9 @@ public class Player {
     private String name;
     private List<Tile> tiles;
 
-    public Player(String name) {
+    public Player(final String name) {
         this.name = name;
-        this.tiles = new ArrayList<>();
+        this.tiles = new ArrayList<>(7);
     }
 
     public String getName() {
@@ -37,5 +37,9 @@ public class Player {
             }
         }
         return null;
+    }
+
+    public void reset() {
+        this.tiles.clear();
     }
 }
